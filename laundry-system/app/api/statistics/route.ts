@@ -17,13 +17,15 @@ export async function GET(req: NextRequest) {
         COUNT(DISTINCT id) as "totalOrders",
         COUNT(DISTINCT "customerId") as "totalCustomers",
         COALESCE(SUM("totalAmount"), 0) as "totalRevenue",
-        SUM(CASE WHEN status = 'COMPLETED' THEN 1 ELSE 0 END) as "completedOrders"
+        SUM(CASE WHEN status = 'COMPLETED' THEN 1 ELSE 0 END) as "completedOrders",
+        SUM(CASE WHEN status LIKE '%PENDING%' OR status = 'PICKED_UP' THEN 1 ELSE 0 END) as "pendingOrders"
       FROM "Order"
     `) as Array<{
       totalOrders: bigint
       totalCustomers: bigint
       totalRevenue: number
       completedOrders: bigint
+      pendingOrders: bigint
     }>
 
     const costs = await prisma.cost.aggregate({
@@ -31,12 +33,30 @@ export async function GET(req: NextRequest) {
       where: { type: "FIXED" },
     })
 
+    const staffCount = await prisma.user.count({
+      where: { role: { in: ["ADMIN", "CASHIER", "DELIVERY", "TECHNICIAN"] } }
+    })
+
+    const data = stats[0];
+
     return NextResponse.json({
-      stats: stats[0],
+      totalRevenue: Number(data.totalRevenue) || 0,
+      totalOrders: Number(data.totalOrders) || 0,
+      activeStaff: staffCount || 0,
+      pendingOrders: Number(data.pendingOrders) || 0,
+      completedOrders: Number(data.completedOrders) || 0,
       monthlyFixedCosts: costs._sum.amount || 0,
     })
   } catch (error) {
     console.error("Statistics fetch error:", error)
-    return NextResponse.json({ error: "Failed to fetch statistics" }, { status: 500 })
+    return NextResponse.json({ 
+      totalRevenue: 0,
+      totalOrders: 0,
+      activeStaff: 0,
+      pendingOrders: 0,
+      completedOrders: 0,
+      monthlyFixedCosts: 0,
+      error: "Failed to fetch statistics" 
+    }, { status: 500 })
   }
 }

@@ -4,9 +4,14 @@ import { useSession, signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LogOut, ShoppingBag, Shirt, Clock } from "lucide-react"
+import { useTranslation } from "@/lib/useLanguage"
+import { useRealtime } from "@/lib/useRealtime"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 export default function CustomerDashboard() {
   const { data: session } = useSession()
+  const { t } = useTranslation()
+  const { isConnected } = useRealtime({})
 
   if (!session) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>
@@ -14,10 +19,17 @@ export default function CustomerDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+            <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 text-sm font-medium">
+        <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+        <span className="text-gray-700">{isConnected ? t('online') : t('offline')}</span>
+      </div>
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Customer Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('customer_dashboard')}</h1>
             <p className="text-gray-600 mt-1">Welcome, {session.user?.name}</p>
           </div>
           <Button variant="outline" onClick={() => signOut({ redirect: true })}>

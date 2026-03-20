@@ -7,9 +7,12 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Loader2, Shirt, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { useTranslation } from "@/lib/useLanguage"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -26,19 +29,19 @@ export default function RegisterPage() {
 
     // Validation
     if (!name || !email || !password || !confirmPassword) {
-      setError("All fields are required")
+      setError(t('all_fields_required'))
       setLoading(false)
       return
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
+      setError(t('passwords_not_match'))
       setLoading(false)
       return
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters")
+      setError(t('password_min_6'))
       setLoading(false)
       return
     }
@@ -59,7 +62,7 @@ export default function RegisterPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error || "Failed to create account")
+        setError(data.error || t('failed_create_account'))
         setLoading(false)
         return
       }
@@ -69,7 +72,7 @@ export default function RegisterPage() {
         router.push("/")
       }, 2000)
     } catch (err) {
-      setError("An error occurred. Please try again.")
+      setError(t('account_error'))
       setLoading(false)
     }
   }
@@ -83,15 +86,15 @@ export default function RegisterPage() {
               <span className="text-3xl text-white">✓</span>
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold text-green-600">Success!</CardTitle>
+              <CardTitle className="text-2xl font-bold text-green-600">{t('success')}</CardTitle>
               <CardDescription className="mt-2">
-                Your account has been created successfully
+                {t('account_created')}
               </CardDescription>
             </div>
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-sm text-gray-600 mb-4">
-              Redirecting to login page...
+              {t('redirecting_login')}
             </p>
             <div className="flex justify-center">
               <Loader2 className="h-5 w-5 animate-spin text-green-600" />
@@ -103,23 +106,26 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4 relative">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center">
             <Shirt className="w-8 h-8 text-white" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t('create_account')}</CardTitle>
             <CardDescription className="mt-2">
-              Join our laundry management system
+              {t('join_system')}
             </CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleRegister} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Full Name</label>
+              <label className="text-sm font-medium text-gray-700">{t('full_name')}</label>
               <Input
                 type="text"
                 value={name}
@@ -130,7 +136,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Email</label>
+              <label className="text-sm font-medium text-gray-700">{t('email')}</label>
               <Input
                 type="email"
                 value={email}
@@ -141,7 +147,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Phone (Optional)</label>
+              <label className="text-sm font-medium text-gray-700">{t('phone')} ({t('optional')})</label>
               <Input
                 type="tel"
                 value={phone}
@@ -151,7 +157,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Password</label>
+              <label className="text-sm font-medium text-gray-700">{t('password')}</label>
               <Input
                 type="password"
                 value={password}
@@ -162,7 +168,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Confirm Password</label>
+              <label className="text-sm font-medium text-gray-700">{t('confirm_password')}</label>
               <Input
                 type="password"
                 value={confirmPassword}
@@ -186,19 +192,19 @@ export default function RegisterPage() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Creating account...
+                  {t('creating_account')}
                 </>
               ) : (
-                "Create Account"
+                t('create_account')
               )}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 mb-3">
-              Already have an account?{" "}
+              {t('already_have_account')}{" "}
               <Link href="/" className="text-blue-600 hover:underline font-medium">
-                Login here
+                {t('sign_in_here')}
               </Link>
             </p>
           </div>
