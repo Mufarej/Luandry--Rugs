@@ -1,4 +1,5 @@
 {
+  "root": "laundry-system",
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
