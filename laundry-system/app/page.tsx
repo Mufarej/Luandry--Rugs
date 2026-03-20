@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Loader2, Shirt } from "lucide-react"
+import Link from "next/link"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -38,6 +39,14 @@ export default function LoginPage() {
             {error && <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg">{error}</div>}
             <Button type="submit" className="w-full h-12 text-base" disabled={loading}>{loading ? <><Loader2 className="ml-2 h-5 w-5 animate-spin" /> Logging in...</> : "Login"}</Button>
           </form>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600 mb-4">
+              Don&apos;t have an account?{" "}
+              <Link href="/register" className="text-blue-600 hover:underline font-medium">
+                Register here
+              </Link>
+            </p>
+          </div>
           <div className="mt-6 p-4 bg-gray-50 rounded-lg">
             <p className="text-xs font-semibold text-gray-500 mb-3">Demo Accounts:</p>
             <div className="space-y-1 text-xs text-gray-600">
