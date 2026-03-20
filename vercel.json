@@ -1,7 +1,8 @@
 {
-  "buildCommand": "npm run build --prefix laundry-system",
-  "devCommand": "npm run dev --prefix laundry-system",
-  "installCommand": "npm install --prefix laundry-system --legacy-peer-deps",
+  "root": "laundry-system",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install --legacy-peer-deps",
   "framework": "nextjs",
-  "outputDirectory": "laundry-system/.next"
+  "outputDirectory": ".next"
 }
