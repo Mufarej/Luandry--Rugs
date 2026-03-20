@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  CASHIER
+  DELIVERY
+  TECHNICIAN
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  PICKED_UP
+  IN_WASHING
+  IN_IRONING
+  IN_PACKAGING
+  READY
+  OUT_FOR_DELIVERY
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CASH
+  INSTAPAY
+  CARD
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  phone         String?   @unique
+  role          Role      @default(CUSTOMER)
+  address       String?
+  locationLink  String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  customerOrders   Order[]        @relation("CustomerOrders")
+  deliveryOrders   Order[]        @relation("DeliveryOrders")
+  technicianOrders Order[]        @relation("TechnicianOrders")
+  orderHistory     OrderHistory[]
+}
+
+model Settings {
+  id              String  @id @default(cuid())
+  shopName        String  @default("My Laundry")
+  shopLogo        String?
+  primaryColor    String  @default("#2563eb")
+  secondaryColor  String  @default("#1e40af")
+  phone           String?
+  address         String?
+  deliveryFee     Float   @default(20)
+  taxRate         Float   @default(0)
+}
+
+model Service {
+  id        String   @id @default(cuid())
+  name      String
+  nameAr    String
+  icon      String?
+  isActive  Boolean  @default(true)
+  items     Item[]
+  createdAt DateTime @default(now())
+}
+
+model Item {
+  id         String   @id @default(cuid())
+  name       String
+  nameAr     String
+  price      Float
+  serviceId  String
+  service    Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     Int           @unique @default(autoincrement())
+  status          OrderStatus   @default(PENDING)
+  totalAmount     Float
+  deliveryFee     Float         @default(0)
+  discount        Float         @default(0)
+  finalAmount     Float
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentMethod   PaymentMethod @default(CASH)
+  notes           String?
+  customerNotes   String?
+  pickupDate      DateTime?
+  deliveryDate    DateTime?
+  completedAt     DateTime?
+
+  customerId      String
+  customer        User          @relation("CustomerOrders", fields: [customerId], references: [id])
+
+  deliveryId      String?
+  delivery        User?         @relation("DeliveryOrders", fields: [deliveryId], references: [id])
+
+  technicianId    String?
+  technician      User?         @relation("TechnicianOrders", fields: [technicianId], references: [id])
+
+  items           OrderItem[]
+  history         OrderHistory[]
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemName    String
+  serviceName String
+  quantity    Int
+  unitPrice   Float
+  totalPrice  Float
+}
+
+model OrderHistory {
+  id          String      @id @default(cuid())
+  orderId     String
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status      OrderStatus
+  note        String?
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  createdAt   DateTime    @default(now())
+}
+
+model Cost {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   @default("FIXED")
+  category    String
+  amount      Float
+  frequency   String   @default("MONTHLY")
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
