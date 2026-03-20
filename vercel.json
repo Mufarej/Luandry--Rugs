@@ -1,13 +1,7 @@
 {
-  "root": "laundry-system",
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "buildCommand": "cd laundry-system && npm run build",
+  "devCommand": "cd laundry-system && npm run dev",
+  "installCommand": "cd laundry-system && npm install",
   "framework": "nextjs",
-  "outputDirectory": ".next",
-  "env": {
-    "NEXTAUTH_SECRET": "@nextauth_secret",
-    "NEXTAUTH_URL": "@nextauth_url",
-    "DATABASE_URL": "@database_url"
-  }
+  "outputDirectory": "laundry-system/.next"
 }
