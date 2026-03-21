@@ -54,8 +54,8 @@ Choose one of these options:
 
 3. **Configure Project**
    - Framework: Next.js (auto-detected)
-   - Root Directory: `./laundry-system` (if using monorepo)
-   - Build Command: `npm run build --legacy-peer-deps`
+   - Root Directory: (leave empty - repository root)
+   - Build Command: `npm run build`
    - Output Directory: `.next`
 
 4. **Add Environment Variables**
@@ -63,20 +63,11 @@ Choose one of these options:
    Click "Environment Variables" and add:
    
    ```
-   KEY: DATABASE_URL
-   VALUE: postgresql://user:password@host:5432/laundry_db
-   
-   KEY: NEXTAUTH_SECRET
-   VALUE: (generate with: openssl rand -base64 32)
-   
-   KEY: NEXTAUTH_URL
-   VALUE: https://your-domain.vercel.app
-   
-   KEY: SEED_SECRET
-   VALUE: your-unique-seed-secret
-   
-   KEY: NODE_ENV
-   VALUE: production
+   DATABASE_URL=postgresql://user:password@host:5432/laundry_db
+   NEXTAUTH_SECRET=<generate with: openssl rand -base64 32>
+   NEXTAUTH_URL=https://your-domain.vercel.app
+   SEED_SECRET=your-unique-seed-secret
+   NODE_ENV=production
    ```
 
 5. **Deploy**
